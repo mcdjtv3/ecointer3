@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Le Modèle Ricardien</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+
+
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Facteurs Spécifiques et Distribution de Revenus</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Pourquoi certains pays continuent-ils d'adopter des mesures protectionnistes malgré les bénéfices du commerce international ?", choices: ["Parce que le commerce ne bénéficie jamais à tous les pays", "Parce que le commerce peut affecter négativement certains groupes de la population", "Parce que le commerce est toujours désavantageux à long terme", "Parce que les coûts du commerce sont plus élevés que ses bénéfices"], correct: 1 },
+        { question: "Qu'est-ce que le modèle à facteurs spécifiques propose comme hypothèses ?", choices: ["Une seule économie produisant plusieurs biens", "Deux pays produisant deux biens : nourriture et vêtements", "Deux pays produisant des biens identiques avec des technologies différentes", "Une économie sans mobilité des facteurs de production"], correct: 1 },
+        { question: "Quels sont les facteurs de production dans le modèle à facteurs spécifiques ?", choices: ["Le capital et la technologie uniquement", "Le travail, la terre et le capital", "Le travail uniquement", "Le travail et la technologie"], correct: 1 },
+        { question: "Quelle est la mobilité des facteurs dans le modèle à facteurs spécifiques ?", choices: ["Le capital et le travail sont mobiles entre secteurs", "Le travail est mobile, mais la terre et le capital sont immobiles entre secteurs", "Tous les facteurs sont immobiles", "Tous les facteurs sont mobiles"], correct: 1 },
+        { question: "Que représente le produit marginal du travail dans ce modèle ?", choices: ["Le salaire moyen d'un secteur", "La quantité de production supplémentaire générée par une unité de travail supplémentaire", "Le coût total de production dans un secteur", "La quantité de biens importés"], correct: 1 },
+        { question: "Que se passe-t-il lorsque le prix des vêtements (PV) augmente ?", choices: ["Les salaires augmentent plus rapidement que le prix des vêtements", "Une partie des travailleurs se déplace du secteur de la nourriture vers celui des vêtements", "Les travailleurs cessent de produire des vêtements", "La production de nourriture augmente"], correct: 1 },
+        { question: "Comment le salaire en termes de vêtements (w/PV) évolue-t-il lorsque PV augmente ?", choices: ["Il augmente", "Il diminue", "Il reste constant", "Il est impossible de le déterminer"], correct: 1 },
+        { question: "Qui sont les gagnants lorsque le prix des vêtements augmente dans ce modèle ?", choices: ["Les travailleurs uniquement", "Les détenteurs du capital dans l'industrie des vêtements", "Les propriétaires terriens", "Tous les groupes de la population"], correct: 1 },
+        { question: "Quels groupes peuvent être défavorisés par le commerce international selon le modèle ?", choices: ["Les travailleurs dans le secteur des exportations", "Les détenteurs de ressources utilisées intensivement dans des industries en concurrence avec les importations", "Les propriétaires terriens dans les pays exportateurs", "Les investisseurs étrangers"], correct: 1 },
+        { question: "Quel est l'avantage principal de la spécialisation selon ce modèle ?", choices: ["Elle réduit la mobilité des travailleurs", "Elle améliore l'efficacité économique grâce aux économies d'échelle", "Elle empêche les importations", "Elle réduit les tensions entre les groupes sociaux"], correct: 1 },
+        { question: "Quel impact la répartition des revenus peut-elle avoir à l'échelle nationale et internationale ?", choices: ["Elle est toujours positive pour tous les groupes", "Elle crée des tensions et des conflits entre différents groupes sociaux", "Elle n'a aucun effet sur les relations internationales", "Elle réduit les conflits entre les pays"], correct: 1 },
+        { question: "Qu'est-ce qui détermine la production dans un secteur spécifique selon le modèle à facteurs spécifiques ?", choices: ["Le nombre de travailleurs dans le pays", "Le produit marginal du travail et les prix relatifs", "Le niveau de technologie et les salaires", "Le commerce international uniquement"], correct: 1 },
+        { question: "Quels facteurs ne peuvent pas être déplacés d'un secteur à un autre dans ce modèle ?", choices: ["Le travail", "La terre et le capital", "Le capital uniquement", "La technologie"], correct: 1 },
+        { question: "Quels éléments peuvent dynamiser la production et le commerce dans le modèle à facteurs spécifiques ?", choices: ["La baisse des prix des biens importés", "La migration et les prêts internationaux", "La réduction des subventions aux industries locales", "La dévaluation monétaire"], correct: 1 },
+        { question: "Pourquoi l'ouverture à l'international peut-elle être défavorable pour certains groupes ?", choices: ["Parce qu'elle réduit les gains à l'exportation", "Parce qu'elle diminue la productivité", "Parce qu'elle affecte négativement les détenteurs de ressources dans les industries en concurrence avec les importations", "Parce qu'elle favorise exclusivement les travailleurs"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
